@@ -473,7 +473,12 @@ class WP_Object_Cache {
                     }
                 }
 
-                $this->redis = new Predis\Client( $parameters, $options );
+                if ( defined( 'WP_PREDIS_CLIENT_CLASS' ) ) {
+                    $this->redis = new WP_PREDIS_CLIENT_CLASS( $parameters, $options );
+                } else {
+                    $this->redis = new Predis\Client( $parameters, $options );
+                }
+
                 $this->redis->connect();
 
                 $this->redis_client .= sprintf( ' (v%s)', Predis\Client::VERSION );
