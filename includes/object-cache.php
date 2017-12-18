@@ -47,7 +47,9 @@ function wp_cache_add( $key, $value, $group = '', $expiration = 0 ) {
  * @return  bool    Always returns True
  */
 function wp_cache_close() {
-    return true;
+  global $wp_object_cache;
+
+  return $wp_object_cache->close();
 }
 
 /**
@@ -530,6 +532,15 @@ class WP_Object_Cache {
      */
     public function redis_instance() {
         return $this->redis;
+    }
+
+    /**
+     * Closes the cache.
+     *
+     * @return bool
+     */
+    public function close() {
+        return true;
     }
 
     /**
