@@ -47,7 +47,9 @@ function wp_cache_add( $key, $value, $group = '', $expiration = 0 ) {
  * @return  bool    Always returns True
  */
 function wp_cache_close() {
-	return true;
+	global $wp_object_cache;
+
+	return $wp_object_cache->close();
 }
 
 /**
@@ -170,7 +172,11 @@ function wp_cache_init() {
 	global $wp_object_cache;
 
 	if ( ! ( $wp_object_cache instanceof WP_Object_Cache ) ) {
-		$wp_object_cache = new WP_Object_Cache;
+		if ( defined( 'WP_REDIS_OBJECT_CACHE_CLASS' ) ) {
+			$wp_object_cache = new WP_REDIS_OBJECT_CACHE_CLASS;
+		} else {
+			$wp_object_cache = new WP_Object_Cache;
+		}
 	}
 }
 
@@ -461,7 +467,12 @@ class WP_Object_Cache {
 					$options[ 'parameters' ][ 'password' ] = WP_REDIS_PASSWORD;
 				}
 
-				$this->redis = new Predis\Client( $parameters, $options );
+				if ( defined( 'WP_PREDIS_CLIENT_CLASS' ) ) {
+					$this->redis = new WP_PREDIS_CLIENT_CLASS( $parameters, $options );
+				} else {
+					$this->redis = new Predis\Client( $parameters, $options );
+				}
+
 				$this->redis->connect();
 
 				$this->redis_client .= sprintf( ' (v%s)', Predis\Client::VERSION );
@@ -513,6 +524,15 @@ class WP_Object_Cache {
 	 */
 	public function redis_instance() {
 		return $this->redis;
+	}
+
+	/**
+	 * Closes the cache.
+	 *
+	 * @return bool
+	 */
+	public function close() {
+		return true;
 	}
 
 	/**
