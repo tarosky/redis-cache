@@ -171,7 +171,11 @@ function wp_cache_init() {
     global $wp_object_cache;
 
     if ( ! ( $wp_object_cache instanceof WP_Object_Cache ) ) {
-        $wp_object_cache = new WP_Object_Cache;
+        if ( defined( 'WP_REDIS_OBJECT_CACHE_CLASS' ) ) {
+            $wp_object_cache = new WP_REDIS_OBJECT_CACHE_CLASS;
+        } else {
+            $wp_object_cache = new WP_Object_Cache;
+        }
     }
 }
 
