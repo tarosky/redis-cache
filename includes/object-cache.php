@@ -174,7 +174,8 @@ function wp_cache_init() {
 
     if ( ! ( $wp_object_cache instanceof WP_Object_Cache ) ) {
         if ( defined( 'WP_REDIS_OBJECT_CACHE_CLASS' ) ) {
-            $wp_object_cache = new WP_REDIS_OBJECT_CACHE_CLASS;
+            $class = WP_REDIS_OBJECT_CACHE_CLASS;
+            $wp_object_cache = new $class;
         } else {
             $wp_object_cache = new WP_Object_Cache;
         }
@@ -480,7 +481,8 @@ class WP_Object_Cache {
                 }
 
                 if ( defined( 'WP_PREDIS_CLIENT_CLASS' ) ) {
-                    $this->redis = new WP_PREDIS_CLIENT_CLASS( $parameters, $options );
+                    $class = WP_PREDIS_CLIENT_CLASS;
+                    $this->redis = new $class( $parameters, $options );
                 } else {
                     $this->redis = new Predis\Client( $parameters, $options );
                 }
