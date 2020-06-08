@@ -184,7 +184,7 @@ function wp_cache_init()
     if (! ($wp_object_cache instanceof WP_Object_Cache)) {
         $fail_gracefully = ! defined('WP_REDIS_GRACEFUL') || WP_REDIS_GRACEFUL;
 
-        $class = defined('WP_REDIS_OBJECT_CACHE_CLASS') ? WP_REDIS_OBJECT_CACHE_CLASS : WP_Object_Cache;
+        $class = defined('WP_REDIS_OBJECT_CACHE_CLASS') ? WP_REDIS_OBJECT_CACHE_CLASS : 'WP_Object_Cache';
         $wp_object_cache = new $class($fail_gracefully);
     }
 }
@@ -444,7 +444,7 @@ class WP_Object_Cache
         try {
             if (strcasecmp('hhvm', $client) === 0) {
                 $this->redis_client = sprintf('HHVM Extension (v%s)', HHVM_VERSION);
-                $class = defined('WP_PREDIS_CLIENT_CLASS') ? WP_PREDIS_CLIENT_CLASS : Redis;
+                $class = defined('WP_PREDIS_CLIENT_CLASS') ? WP_PREDIS_CLIENT_CLASS : 'Redis';
                 $this->redis = new $class();
 
                 // Adjust host and port, if the scheme is `unix`
@@ -468,7 +468,7 @@ class WP_Object_Cache
                 );
 
                 if (defined('WP_REDIS_SHARDS')) {
-                    $class = defined('WP_PREDIS_CLIENT_CLASS') ? WP_PREDIS_CLIENT_CLASS : RedisArray;
+                    $class = defined('WP_PREDIS_CLIENT_CLASS') ? WP_PREDIS_CLIENT_CLASS : 'RedisArray';
                     $this->redis = new $class(array_values(WP_REDIS_SHARDS));
                 } elseif (defined('WP_REDIS_CLUSTER')) {
                     $connection_args = [
@@ -482,10 +482,10 @@ class WP_Object_Cache
                         $connection_args[] = $parameters['password'];
                     }
 
-                    $class = defined('WP_PREDIS_CLIENT_CLASS') ? WP_PREDIS_CLIENT_CLASS : RedisCluster;
+                    $class = defined('WP_PREDIS_CLIENT_CLASS') ? WP_PREDIS_CLIENT_CLASS : 'RedisCluster';
                     $this->redis = new $class(...$connection_args);
                 } else {
-                    $class = defined('WP_PREDIS_CLIENT_CLASS') ? WP_PREDIS_CLIENT_CLASS : Redis;
+                    $class = defined('WP_PREDIS_CLIENT_CLASS') ? WP_PREDIS_CLIENT_CLASS : 'Redis';
                     $this->redis = new $class();
 
                     $connection_args = [
@@ -586,7 +586,7 @@ class WP_Object_Cache
                     }
                 }
 
-                $class = defined('WP_PREDIS_CLIENT_CLASS') ? WP_PREDIS_CLIENT_CLASS : Predis\Client;
+                $class = defined('WP_PREDIS_CLIENT_CLASS') ? WP_PREDIS_CLIENT_CLASS : 'Predis\\Client';
                 $this->redis = new $class($parameters, $options);
                 $this->redis->connect();
 
